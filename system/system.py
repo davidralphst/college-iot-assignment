@@ -1,13 +1,19 @@
 import RPi.GPIO as GPIO
 import time
+from datetime import datetime
 
 # database
 import sqlite3
-conn = sqlite3.connect('database.db')
+conn = sqlite3.connect('../database.db')
 c = conn.cursor()
 
 # create table if not exists
-c.execute('''CREATE TABLE IF NOT EXISTS intrusion (time text)''')
+c.execute('''CREATE TABLE IF NOT EXISTS intrusion (id INTEGER PRIMARY KEY AUTOINCREMENT, time text)''')
+
+# painful
+def get_time():
+    now = datetime.now()
+    return now.strftime("%Y-%m-%d %H:%M:%S")
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
@@ -25,4 +31,4 @@ while True:
     GPIO.output(3, 1)  # Turn ON LED
     time.sleep(0.1)
     # write intrusion time etc to database
-    c.execute("INSERT INTO intrusion (time) VALUES (datetime('now'))")
+    c.execute("INSERT INTO intrusion VALUES (NULL, ?)", (get_time(),))

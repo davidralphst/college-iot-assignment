@@ -2,24 +2,51 @@
 <html lang="en">
   <head>
     <title>IoT Unit 19 Security Dash</title>
+    <style>
+      table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+      }
+      th, td {
+        padding: 5px;
+      }
+    </style>
   </head>
   <body>
     <h1>Security Dashboard</h1>
-    <div></div>
+    <h2>Intrusions</h2>
+    <div>Loading...</div>
     <script>
         // get data from db at /data
+        // data is a list of intrusions with id and timestam
         fetch('/data')
             .then(response => response.json())
             .then(data => {
-                // create a new div for each data point
-                data.forEach(d => {
-                    const div = document.createElement('div');
-                    div.innerHTML = `
-                        <h2>${d.name}</h2>
-                        <p>${d.value}</p>
-                    `;
-                    document.body.appendChild(div);
+                // create a list of intrusion elements in a table
+                const table = document.createElement('table');
+                const header = document.createElement('tr');
+                const idHeader = document.createElement('th');
+                idHeader.textContent = 'ID';
+                const timeHeader = document.createElement('th');
+                timeHeader.textContent = 'Time';
+                header.appendChild(idHeader);
+                header.appendChild(timeHeader);
+                table.appendChild(header);
+
+                data.forEach(intrusion => {
+                    const row = document.createElement('tr');
+                    const id = document.createElement('td');
+                    id.textContent = intrusion.id;
+                    const time = document.createElement('td');
+                    time.textContent = intrusion.time;
+                    row.appendChild(id);
+                    row.appendChild(time);
+                    table.appendChild(row);
                 });
+
+                // add the table to the page
+                document.querySelector('div').textContent = '';
+                document.querySelector('div').appendChild(table);
             });
     </script>
   </body>
