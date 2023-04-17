@@ -1,9 +1,6 @@
 from gpiozero import MotionSensor
 from datetime import datetime
-import pygame
-import pygame.camera
-import pygame.image
-
+from cv2 import *
 
 # databases
 import sqlite3
@@ -20,18 +17,16 @@ def get_time():
     return now.strftime("%Y-%m-%d %H:%M:%S")
 
 pir = MotionSensor(17)
-pygame.camera.init()
-camlist = pygame.camera.list_cameras()
-cam = pygame.camera.Camera(camlist[0], (640, 480))
-cam.start()
+cam_port = 0
+cam = VideoCapture(cam_port)
 
 while True:
   pir.wait_for_motion()
   print("Intruder detected")
   # write intrusion time etc to database
+  result, image = cam.read()
+  imwrite("../photos/" + get_time() + ".jpg", image)
   c.execute("INSERT INTO intrusion VALUES (NULL, ?)", (get_time(),))
-  image = cam.get_image()
-  pygame.image.save(image, "../photos/" + get_time() + ".jpg")
   conn.commit()
   pir.wait_for_no_motion()
   print("No intruders")
