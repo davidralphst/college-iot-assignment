@@ -1,5 +1,6 @@
 from gpiozero import MotionSensor
 from datetime import datetime
+import pygame
 import pygame.camera
 import pygame.image
 
