@@ -1,4 +1,4 @@
-import RPi.GPIO as GPIO
+from gpiozero import MotionSensor
 import time
 from datetime import datetime
 
@@ -15,20 +15,14 @@ def get_time():
     now = datetime.now()
     return now.strftime("%Y-%m-%d %H:%M:%S")
 
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(11, GPIO.IN)  # Read output from PIR motion sensor
-GPIO.setup(3, GPIO.OUT)  # L
+pir = MotionSensor(17)
 
 while True:
-  i = GPIO.input(11)
-  if i == 0:  # When output from motion sensor is LOW
-    print "No intruders", i
-    GPIO.output(3, 0)  # Turn OFF LED
-    time.sleep(0.1)
-  elif i == 1:  # When output from motion sensor is HIGH
-    print "Intruder detected", i
-    GPIO.output(3, 1)  # Turn ON LED
-    time.sleep(0.1)
-    # write intrusion time etc to database
-    c.execute("INSERT INTO intrusion VALUES (NULL, ?)", (get_time(),))
+  pir.wait_for_motion()
+  print "No intruders"
+  time.sleep(0.1)
+  pir.wait_for_no_motion()
+  print "Intruder detected"
+  time.sleep(0.1)
+  # write intrusion time etc to database
+  c.execute("INSERT INTO intrusion VALUES (NULL, ?)", (get_time(),))
