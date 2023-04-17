@@ -19,10 +19,10 @@ pir = MotionSensor(17)
 
 while True:
   pir.wait_for_motion()
-  print "No intruders"
+  print("No intruders")
   time.sleep(0.1)
   pir.wait_for_no_motion()
-  print "Intruder detected"
+  print("Intruder detected")
   time.sleep(0.1)
   # write intrusion time etc to database
   c.execute("INSERT INTO intrusion VALUES (NULL, ?)", (get_time(),))
